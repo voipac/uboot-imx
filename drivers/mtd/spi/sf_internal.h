@@ -36,6 +36,7 @@
 #define CMD_WRITE_ENABLE		0x06
 #define CMD_READ_CONFIG			0x35
 #define CMD_FLAG_STATUS			0x70
+#define CMD_GLOBAL_PROTECTION_UNLOCK	0x98
 
 /* Read commands */
 #define CMD_READ_ARRAY_SLOW		0x03

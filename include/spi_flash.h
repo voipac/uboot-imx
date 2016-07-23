@@ -37,6 +37,7 @@
 #define SECT_32K	1 << 2
 #define E_FSR		1 << 3
 #define WR_QPP		1 << 4
+#define SST_GBPU	1 << 5
 
 /* Enum list - Full read commands */
 enum spi_read_cmds {

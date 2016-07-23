@@ -1,0 +1,13 @@
+MX6TINYREX BOARD
+M:	Name <support@voipac.com>
+S:	Maintained
+F:	board/fedevel/mx6tinyrex/
+F:	include/configs/mx6tinyrex.h
+F:	configs/mx6stinyrex_defconfig
+F:	configs/mx6dltinyrex_defconfig
+F:	configs/mx6qtinyrex_defconfig
+F:	configs/mx6tinyrexlite_defconfig
+F:	configs/mx6tinyrexbasic_defconfig
+F:	configs/mx6tinyrexpro_defconfig
+F:	configs/mx6tinyrexmax_defconfig
+F:	configs/mx6tinyrexultra_defconfig
