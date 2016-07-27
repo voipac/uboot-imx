@@ -580,6 +580,14 @@ config TARGET_PICOSOM_IMX6UL
         bool "Support picosom-imx6ul"
         select CPU_V7
 
+config TARGET_MX6REX
+	bool "Support mx6rex"
+        select CPU_V7
+
+config TARGET_MX6TINYREX
+	bool "Support mx6tinyrex"
+        select CPU_V7
+
 config TARGET_GW_VENTANA
 	bool "Support gw_ventana"
 	select CPU_V7
@@ -854,6 +862,8 @@ source "board/denx/m28evk/Kconfig"
 source "board/denx/m53evk/Kconfig"
 source "board/embest/mx6boards/Kconfig"
 source "board/esg/ima3-mx53/Kconfig"
+source "board/fedevel/mx6rex/Kconfig"
+source "board/fedevel/mx6tinyrex/Kconfig"
 source "board/freescale/ls2085a/Kconfig"
 source "board/freescale/ls1021aqds/Kconfig"
 source "board/freescale/ls1021atwr/Kconfig"

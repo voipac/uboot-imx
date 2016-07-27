@@ -44,6 +44,7 @@ enum {
 	SST_WP		= 1 << 4,
 	WR_QPP		= 1 << 5,
 	SECT_2K		= 1 << 6,
+	SST_GBPU	= 1 << 7,
 };
 
 #define SPI_FLASH_PAGE_256		(1 << 0)
@@ -82,6 +83,7 @@ enum {
 #define CMD_WRITE_ENABLE		0x06
 #define CMD_READ_CONFIG		0x35
 #define CMD_FLAG_STATUS		0x70
+#define CMD_GLOBAL_PROTECTION_UNLOCK	0x98
 
 /* Read commands */
 #define CMD_READ_ARRAY_SLOW		0x03

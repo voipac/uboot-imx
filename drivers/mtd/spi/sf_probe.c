@@ -256,7 +256,13 @@ static int spi_flash_validate_params(struct spi_slave *spi, u8 *idcode,
 #if defined(CONFIG_SPI_FLASH_ATMEL) || \
 	defined(CONFIG_SPI_FLASH_MACRONIX) || \
 	defined(CONFIG_SPI_FLASH_SST)
-		spi_flash_cmd_write_status(flash, 0);
+		if (params->flags & SST_GBPU) {
+			spi_flash_cmd_write_enable(flash);
+			spi_flash_cmd(flash->spi, CMD_GLOBAL_PROTECTION_UNLOCK, NULL, 0);
+			spi_flash_cmd_write_disable(flash);
+		} else {
+			spi_flash_cmd_write_status(flash, 0);
+		}
 #endif
 
 	return 0;
