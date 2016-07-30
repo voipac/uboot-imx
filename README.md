@@ -1,6 +1,10 @@
-## uboot-imx-v2015.04
-* mx6ultra/max/pro/basic tinyrex u-boot v2014.10 (production)(TODO)
-* mx6ultra/pro/basic rex u-boot v2014.10 (production)(TODO)
+# uboot-imx-v2015.04
+## Supported modules:
+* TinyRex mx6ultra/max/pro/basic (production)
+* Rex mx6ultra/pro/basic (production)
+
+## Supported OS:
+* Linux
 
 ## Download repository
     git clone -b uboot-imx-v2015.04 --single-branch https://github.com/voipac/uboot-imx uboot-imx-v2015.04-rex
@@ -12,63 +16,63 @@
     export ARCH=arm
 
 ## Build
-#### Build (imx6s tinyrexlite) (production) (TODO)
+#### Build (imx6s tinyrexlite) (production)
     make distclean
     make mx6tinyrexlite_config
     make
     cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexlite.imx
     cp u-boot.bin /srv/tftp/imx6/u-boot-imx6-tinyrexlite.bin
 
-#### Build (imx6s tinyrexbasic) (production) (TODO)
+#### Build (imx6s tinyrexbasic) (production)
     make distclean
     make mx6tinyrexbasic_config
     make
     cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexbasic.imx
     cp u-boot.bin /srv/tftp/imx6/u-boot-imx6-tinyrexbasic.bin
 
-#### Build (imx6d tinyrexpro) (production) (TODO)
+#### Build (imx6d tinyrexpro) (production)
     make distclean
     make mx6tinyrexpro_config
     make
     cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexpro.imx
     cp u-boot.bin /srv/tftp/imx6/u-boot-imx6-tinyrexpro.bin
 
-#### Build (imx6q tinyrexmax) (production) (TODO)
+#### Build (imx6q tinyrexmax) (production)
     make distclean
     make mx6tinyrexmax_config
     make
     cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexmax.imx
     cp u-boot.bin /srv/tftp/imx6/u-boot-imx6-tinyrexmax.bin
 
-#### Build (imx6q tinyrexultra) (production) (TODO)
+#### Build (imx6qp tinyrexultra) (production)
     make distclean
     make mx6tinyrexultra_config
     make
     cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexultra.imx
     cp u-boot.bin /srv/tftp/imx6/u-boot-imx6-tinyrexultra.bin
 
-#### Build (imx6d rexbasic) (production) (TODO)
+#### Build (imx6d rexbasic) (production)
     make distclean
     make mx6rexbasic_config
     make
     cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-rexbasic.imx
     cp u-boot.bin /srv/tftp/imx6/u-boot-imx6-rexbasic.bin
 
-#### Build (imx6q rexpro) (production) (TODO)
+#### Build (imx6q rexpro) (production)
     make distclean
     make mx6rexpro_config
     make
     cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-rexpro.imx
     cp u-boot.bin /srv/tftp/imx6/u-boot-imx6-rexpro.bin
 
-#### Build (imx6q rexpro) (SD card version) (TODO)
+#### Build (imx6q rexpro) (SD card version)
     make distclean
     make mx6rexprosd_config
     make
     cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-rexprosd.imx
     cp u-boot.bin /srv/tftp/imx6/u-boot-imx6-rexprosd.bin
 
-#### Build (imx6q rexultra) (production) (TODO)
+#### Build (imx6q rexultra) (production)
     make distclean
     make mx6rexultra_config
     make
