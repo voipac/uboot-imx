@@ -9,7 +9,7 @@
 ## Download repository
     git clone -b uboot-imx-v2015.04 --single-branch https://github.com/voipac/uboot-imx uboot-imx-v2015.04-rex
 
-## uboot-imx-v2014.10
+# uboot-imx-v2014.10
 ## Supported modules:
 * TinyRex mx6max/pro/basic (production)
 * TinyRex mx6q/dl/s (prototypes)
@@ -22,7 +22,7 @@
 ## Download repository
     git clone -b uboot-imx-v2014.10 --single-branch https://github.com/voipac/uboot-imx uboot-imx-v2014.10-rex
 
-## uboot-imx-v2009.08
+# uboot-imx-v2009.08
 ## Supported modules:
 * Rex mx6pro (production)
 * Rex mx6dl (prototypes)
