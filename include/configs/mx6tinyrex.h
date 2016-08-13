@@ -289,29 +289,29 @@
 	"spidev=" __stringify(CONFIG_ENV_SPI_BUS) "\0" \
 	"spics=" __stringify(CONFIG_ENV_SPI_CS) "\0" \
 	"set_ethernet=" \
-		"if test ${ethaddr}; then; else " \
+		"if test -n ${ethaddr}; then; else " \
 			"setenv ethaddr  " CONFIG_ENV_DEFAULT_ETH_ADDR  "; " \
 		"fi; " \
-		"if test ${ipaddr}; then; else " \
+		"if test -n ${ipaddr}; then; else " \
 			"setenv ipaddr   " CONFIG_ENV_DEFAULT_CLIENT_IP "; " \
 		"fi; " \
-		"if test ${serverip}; then; else " \
+		"if test -n ${serverip}; then; else " \
 			"setenv serverip " CONFIG_ENV_DEFAULT_SERVER_IP "; " \
 		"fi; " \
-		"if test ${netmask}; then; else " \
+		"if test -n ${netmask}; then; else " \
 			"setenv netmask  " CONFIG_ENV_DEFAULT_NETMASK   "; " \
 		"fi\0" \
 	"update_set_filename=" \
-		"if test ${upd_uboot}; then; else " \
+		"if test -n ${upd_uboot}; then; else " \
 			"setenv upd_uboot " CONFIG_ENV_DEFAULT_UBT_FILE  "; " \
 		"fi; " \
-		"if test ${upd_kernel}; then; else " \
+		"if test -n ${upd_kernel}; then; else " \
 			"setenv upd_kernel " CONFIG_ENV_DEFAULT_IMG_FILE "; " \
 		"fi; " \
-		"if test ${upd_fdt}; then; else " \
+		"if test -n ${upd_fdt}; then; else " \
 			"setenv upd_fdt    " CONFIG_ENV_DEFAULT_FDT_FILE "; " \
 		"fi; " \
-		"if test ${upd_script}; then; else " \
+		"if test -n ${upd_script}; then; else " \
 			"setenv upd_script " CONFIG_ENV_DEFAULT_SCR_FILE "; " \
 		"fi\0" \
 	"update_uboot=" \
