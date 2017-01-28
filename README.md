@@ -21,35 +21,66 @@
     make mx6tinyrexlite_config
     make
     cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexlite.imx
-    cp u-boot.bin /srv/tftp/imx6/u-boot-imx6-tinyrexlite.bin
+
+    make distclean
+    make mx6tinyrexliterecovery_config
+    make
+    cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexliterecovery.imx
 
 #### Build (imx6s tinyrexbasic) (production)
     make distclean
     make mx6tinyrexbasic_config
     make
     cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexbasic.imx
-    cp u-boot.bin /srv/tftp/imx6/u-boot-imx6-tinyrexbasic.bin
+
+    make distclean
+    make mx6tinyrexbasicrecovery_config
+    make
+    cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexbasicrecovery.imx
 
 #### Build (imx6d tinyrexpro) (production)
     make distclean
     make mx6tinyrexpro_config
     make
     cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexpro.imx
-    cp u-boot.bin /srv/tftp/imx6/u-boot-imx6-tinyrexpro.bin
+
+    make distclean
+    make mx6tinyrexprorecovery_config
+    make
+    cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexprorecovery.imx
 
 #### Build (imx6q tinyrexmax) (production)
     make distclean
     make mx6tinyrexmax_config
     make
     cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexmax.imx
-    cp u-boot.bin /srv/tftp/imx6/u-boot-imx6-tinyrexmax.bin
+
+    make distclean
+    make mx6tinyrexmaxrecovery_config
+    make
+    cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexmaxrecovery.imx
+
+#### Build (imx6q tinyrexmax4g) (production)
+    make distclean
+    make mx6tinyrexmax4g_config
+    make
+    cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexmax4g.imx
+
+    make distclean
+    make mx6tinyrexmax4grecovery_config
+    make
+    cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexmax4grecovery.imx
 
 #### Build (imx6qp tinyrexultra) (production)
     make distclean
     make mx6tinyrexultra_config
     make
     cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexultra.imx
-    cp u-boot.bin /srv/tftp/imx6/u-boot-imx6-tinyrexultra.bin
+
+    make distclean
+    make mx6tinyrexultrarecovery_config
+    make
+    cp u-boot.imx /srv/tftp/imx6/u-boot-imx6-tinyrexultrarecovery.imx
 
 #### Build (imx6d rexbasic) (production)
     make distclean
@@ -81,7 +112,7 @@
 
 ## IMPORTANT
     u-boot-imx6*-rex.imx must be flashed into spi flash at offset 0x400.
-    
+
 ## Some lines that might be helpful
     setenv ipaddr 192.168.0.150
     setenv serverip 192.168.0.1
@@ -91,6 +122,3 @@
     mw.b 0x10800000 0xFF 0x80000;
     tftp 0x10800000 imx6/u-boot-imx6q-rex.imx;
     sf probe 2:2;sf erase 0x0 0x80000;sf write 0x10800000 0x400 0x7fc00
-
-  
-
