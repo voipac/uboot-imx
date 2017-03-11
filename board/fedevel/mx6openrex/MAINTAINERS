@@ -1,0 +1,9 @@
+MX6OPENREX BOARD
+M:	Name <support@voipac.com>
+S:	Maintained
+F:	board/fedevel/mx6openrex/
+F:	include/configs/mx6openrex.h
+F:	configs/mx6openrexbasic_defconfig
+F:	configs/mx6openrexmax_defconfig
+F:	configs/mx6openrexmax4g_defconfig
+F:	configs/mx6openrexultra_defconfig

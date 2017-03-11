@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015-2017 Voipac.
  *
- * Configuration settings for the Fedevel i.MX6 TINYREX board.
+ * Configuration settings for the Fedevel i.MX6 OPENREX board.
  *
  * SPDX-License-Identifier:	GPL-2.0+
  */
@@ -18,8 +18,8 @@
 #define CONFIG_DISPLAY_CPUINFO
 #define CONFIG_DISPLAY_BOARDINFO
 
-#define MACH_TYPE_MX6TINYREX                5025
-#define CONFIG_MACH_TYPE                    MACH_TYPE_MX6TINYREX
+#define MACH_TYPE_MX6OPENREX                5082
+#define CONFIG_MACH_TYPE                    MACH_TYPE_MX6OPENREX
 #define CONFIG_BOOTDELAY                    1
 
 #define CONFIG_LOADADDR                     0x10800000
@@ -31,7 +31,7 @@
 #if defined(CONFIG_DDR_SIZE)
 #define CONFIG_BOARD_PHYS_SDRAM_SIZE        CONFIG_DDR_SIZE
 #else
-#define CONFIG_BOARD_PHYS_SDRAM_SIZE        SZ_256M
+#define CONFIG_BOARD_PHYS_SDRAM_SIZE        SZ_512M
 #warning "Using default SDRAM size"
 #endif
 
@@ -59,7 +59,7 @@
 /* MMC Configs */
 #define CONFIG_FSL_ESDHC
 #define CONFIG_FSL_USDHC
-#define CONFIG_SYS_FSL_ESDHC_ADDR           USDHC3_BASE_ADDR
+#define CONFIG_SYS_FSL_ESDHC_ADDR           USDHC2_BASE_ADDR
 
 #define CONFIG_MMC
 #define CONFIG_CMD_MMC
@@ -71,7 +71,7 @@
 #define CONFIG_CMD_EXT4
 #define CONFIG_CMD_EXT4_WRITE
 #define CONFIG_DOS_PARTITION
-#define CONFIG_SYS_FSL_USDHC_NUM            3
+#define CONFIG_SYS_FSL_USDHC_NUM            1
 
 /* SPI Configs */
 #define CONFIG_CMD_SF
@@ -79,8 +79,8 @@
 #define CONFIG_SPI_FLASH
 #define CONFIG_SPI_FLASH_SST
 #define CONFIG_MXC_SPI
-#define CONFIG_SF_DEFAULT_BUS               0
-#define CONFIG_SF_DEFAULT_CS                0
+#define CONFIG_SF_DEFAULT_BUS               2
+#define CONFIG_SF_DEFAULT_CS                2
 #define CONFIG_SF_DEFAULT_SPEED             20000000
 #define CONFIG_SF_DEFAULT_MODE              SPI_MODE_0
 #endif
@@ -109,8 +109,8 @@
 /* Miscellaneous configurable options */
 #define CONFIG_SYS_LONGHELP
 #define CONFIG_SYS_HUSH_PARSER
-#define CONFIG_SYS_PROMPT                   "TinyRex U-Boot > "
-#define CONFIG_SYS_PROMPT_HUSH_PS2          "TinyRex U-Boot > "
+#define CONFIG_SYS_PROMPT                   "OpenRex U-Boot > "
+#define CONFIG_SYS_PROMPT_HUSH_PS2          "OpenRex U-Boot > "
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_SYS_CBSIZE                   1024
 
@@ -148,7 +148,7 @@
 #if defined(CONFIG_ENV_IS_IN_MMC)
 #define CONFIG_ENV_SIZE                     (SZ_8K)
 #define CONFIG_ENV_OFFSET                   (8 * SZ_64K)
-#define CONFIG_SYS_MMC_ENV_DEV              0 /* SDHC3 */
+#define CONFIG_SYS_MMC_ENV_DEV              0 /* SDHC2 */
 #elif defined(CONFIG_ENV_IS_IN_SPI_FLASH)
 #define CONFIG_ENV_SIZE                     (SZ_8K)
 #define CONFIG_ENV_OFFSET                   (8 * SZ_64K)
@@ -221,7 +221,7 @@
 #define CONFIG_PCI_PNP
 #define CONFIG_PCI_SCAN_SHOW
 #define CONFIG_PCIE_IMX
-#define CONFIG_PCIE_IMX_PERST_GPIO          IMX_GPIO_NR(5, 2)
+#define CONFIG_PCIE_IMX_PERST_GPIO          IMX_GPIO_NR(4, 15)
 #endif
 
 /* Fuse Configs */
@@ -254,13 +254,21 @@
 #define CONFIG_USB_MAX_CONTROLLER_COUNT     1 /* Enabled USB controller number */
 #endif
 
+/* PMIC Configs */
+#define CONFIG_POWER
+#ifdef CONFIG_POWER
+#define CONFIG_POWER_I2C
+#define CONFIG_POWER_PFUZE100
+#define CONFIG_POWER_PFUZE100_I2C_ADDR      0x08
+#endif
+
 /* Env settings */
 #define CONFIG_ENV_CONSOLE_DEV              "ttymxc0"
-#define CONFIG_ENV_MMCROOT                  "/dev/mmcblk2p2"
-#define CONFIG_ENV_DEFAULT_UBT_FILE         "u-boot-" CONFIG_BOARD_DEFAULT_ARCH_PREFIX "-tinyrex" CONFIG_BOARD_DEFAULT_ARCH_POSTFIX ".imx"
-#define CONFIG_ENV_DEFAULT_IMG_FILE         "zImage-" CONFIG_BOARD_DEFAULT_ARCH_PREFIX "-tinyrex" CONFIG_BOARD_DEFAULT_ARCH_POSTFIX
-#define CONFIG_ENV_DEFAULT_FDT_FILE                   CONFIG_BOARD_DEFAULT_ARCH_PREFIX "-tinyrex" CONFIG_BOARD_DEFAULT_ARCH_POSTFIX ".dtb"
-#define CONFIG_ENV_DEFAULT_SCR_FILE         "boot-"   CONFIG_BOARD_DEFAULT_ARCH_PREFIX "-tinyrex" CONFIG_BOARD_DEFAULT_ARCH_POSTFIX ".scr"
+#define CONFIG_ENV_MMCROOT                  "/dev/mmcblk1p2"
+#define CONFIG_ENV_DEFAULT_UBT_FILE         "u-boot-" CONFIG_BOARD_DEFAULT_ARCH_PREFIX "-openrex" CONFIG_BOARD_DEFAULT_ARCH_POSTFIX ".imx"
+#define CONFIG_ENV_DEFAULT_IMG_FILE         "zImage-" CONFIG_BOARD_DEFAULT_ARCH_PREFIX "-openrex" CONFIG_BOARD_DEFAULT_ARCH_POSTFIX
+#define CONFIG_ENV_DEFAULT_FDT_FILE                   CONFIG_BOARD_DEFAULT_ARCH_PREFIX "-openrex" CONFIG_BOARD_DEFAULT_ARCH_POSTFIX ".dtb"
+#define CONFIG_ENV_DEFAULT_SCR_FILE         "boot-"   CONFIG_BOARD_DEFAULT_ARCH_PREFIX "-openrex" CONFIG_BOARD_DEFAULT_ARCH_POSTFIX ".scr"
 #define CONFIG_ENV_DEFAULT_ETH_ADDR         "00:0D:15:00:D1:75"
 #define CONFIG_ENV_DEFAULT_CLIENT_IP        "192.168.0.150"
 #define CONFIG_ENV_DEFAULT_SERVER_IP        "192.168.0.1"
@@ -317,11 +325,13 @@
 	"update_uboot=" \
 		"run set_ethernet; " \
 		"run update_set_filename; " \
-		"if mmc dev ${mmcdev}; then "	\
+		"if sf probe ${spidev}:${spics}; then "	\
 			"if tftp ${tftp_dir}/${upd_uboot}; then " \
-				"setexpr fw_sz ${filesize} / 0x200; " \
-				"setexpr fw_sz ${fw_sz} + 1; " \
-				"mmc write ${loadaddr} 0x2 ${fw_sz}; " \
+				"setexpr align_sz ${filesize} + 0x7FFF; " \
+				"setexpr align_sz ${align_sz} / 0x8000; " \
+				"setexpr align_sz ${align_sz} * 0x8000; " \
+				"sf erase 0x0 ${align_sz}; " \
+				"sf write ${loadaddr} 0x400 ${filesize}; " \
 			"fi; "	\
 		"fi\0" \
 	"update_kernel=" \

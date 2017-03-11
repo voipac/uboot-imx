@@ -1,11 +1,13 @@
 /*
- * Copyright (C) 2015-2016 Voipac.
+ * Copyright (C) 2015-2017 Voipac.
  *
  * Author: support <support@voipac.com>
  *
  * SPDX-License-Identifier:	GPL-2.0+
  */
 
+#include <common.h>
+#include <asm/io.h>
 #include <asm/arch/clock.h>
 #include <asm/arch/imx-regs.h>
 #include <asm/arch/iomux.h>
@@ -24,7 +26,6 @@
 #include <micrel.h>
 #include <asm/arch/mxc_hdmi.h>
 #include <asm/arch/crm_regs.h>
-#include <asm/io.h>
 #include <asm/arch/sys_proto.h>
 #include <i2c.h>
 #include <usb.h>
@@ -59,15 +60,6 @@ DECLARE_GLOBAL_DATA_PTR;
 #define RST_PAD_CTRL   (PAD_CTL_ODE         | PAD_CTL_DSE_40ohm | \
                         PAD_CTL_SRE_FAST)
 
-#ifdef CONFIG_LDO_BYPASS_CHECK
-void ldo_mode_set(int ldo_bypass)
-{
-        if (ldo_bypass) {
-                printf("ldo_bypass mode is not supported\n");
-        }
-}
-#endif
-
 int dram_init(void)
 {
         gd->ram_size = PHYS_SDRAM_SIZE;
@@ -79,6 +71,11 @@ iomux_v3_cfg_t const uart1_pads[] = {
         MX6_PAD_CSI0_DAT10__UART1_TX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
         MX6_PAD_CSI0_DAT11__UART1_RX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
 };
+
+static void setup_iomux_uart(void)
+{
+        imx_iomux_v3_setup_multiple_pads(uart1_pads, ARRAY_SIZE(uart1_pads));
+}
 
 iomux_v3_cfg_t const enet_pads1[] = {
         MX6_PAD_ENET_MDIO__ENET_MDIO       | MUX_PAD_CTRL(ENET_PAD_CTRL),
@@ -179,6 +176,8 @@ iomux_v3_cfg_t const ecspi2_pads[] = {
         MX6_PAD_DISP0_DAT18__GPIO5_IO12  | MUX_PAD_CTRL(NO_PAD_CTRL), /* CS0 */
 };
 
+#define GPIO_ECSPI2_CS0     IMX_GPIO_NR(5, 12)
+
 iomux_v3_cfg_t const ecspi3_pads[] = {
         MX6_PAD_DISP0_DAT0__ECSPI3_SCLK | MUX_PAD_CTRL(SPI_PAD_CTRL),
         MX6_PAD_DISP0_DAT1__ECSPI3_MOSI | MUX_PAD_CTRL(SPI_PAD_CTRL),
@@ -186,12 +185,18 @@ iomux_v3_cfg_t const ecspi3_pads[] = {
         MX6_PAD_DISP0_DAT5__GPIO4_IO26  | MUX_PAD_CTRL(NO_PAD_CTRL), /* CS2 */
 };
 
+#define GPIO_ECSPI3_CS2     IMX_GPIO_NR(4, 26)
+
 static void setup_spi(void)
 {
+        imx_iomux_v3_setup_multiple_pads(ecspi2_pads, ARRAY_SIZE(ecspi2_pads));
+        gpio_direction_output(GPIO_ECSPI2_CS0, 0);
+
         imx_iomux_v3_setup_multiple_pads(ecspi3_pads, ARRAY_SIZE(ecspi3_pads));
+        gpio_direction_output(GPIO_ECSPI3_CS2, 0);
 }
 
-static struct i2c_pads_info i2c0_pad_info = {
+static struct i2c_pads_info i2c1_pad_info = {
         .scl = {
                 .i2c_mode  = MX6_PAD_CSI0_DAT9__I2C1_SCL   | MUX_PAD_CTRL(I2C_PAD_CTRL),
                 .gpio_mode = MX6_PAD_CSI0_DAT9__GPIO5_IO27 | MUX_PAD_CTRL(I2C_PAD_CTRL),
@@ -204,7 +209,7 @@ static struct i2c_pads_info i2c0_pad_info = {
         }
 };
 
-static struct i2c_pads_info i2c1_pad_info = {
+static struct i2c_pads_info i2c2_pad_info = {
         .scl = {
                 .i2c_mode  = MX6_PAD_KEY_COL3__I2C2_SCL   | MUX_PAD_CTRL(I2C_PAD_CTRL),
                 .gpio_mode = MX6_PAD_KEY_COL3__GPIO4_IO12 | MUX_PAD_CTRL(I2C_PAD_CTRL),
@@ -217,7 +222,7 @@ static struct i2c_pads_info i2c1_pad_info = {
         }
 };
 
-static struct i2c_pads_info i2c2_pad_info = {
+static struct i2c_pads_info i2c3_pad_info = {
         .scl = {
                 .i2c_mode  = MX6_PAD_EIM_D17__I2C3_SCL   | MUX_PAD_CTRL(I2C_PAD_CTRL),
                 .gpio_mode = MX6_PAD_EIM_D17__GPIO3_IO17 | MUX_PAD_CTRL(I2C_PAD_CTRL),
@@ -238,11 +243,6 @@ iomux_v3_cfg_t const pcie_pads[] = {
 static void setup_pcie(void)
 {
         imx_iomux_v3_setup_multiple_pads(pcie_pads, ARRAY_SIZE(pcie_pads));
-}
-
-static void setup_iomux_uart(void)
-{
-	imx_iomux_v3_setup_multiple_pads(uart1_pads, ARRAY_SIZE(uart1_pads));
 }
 
 #ifdef CONFIG_FSL_ESDHC
@@ -459,8 +459,6 @@ int board_eth_init(bd_t *bis)
 
         setup_iomux_enet();
 
-        setup_pcie();
-
         return cpu_eth_init(bis);
 }
 
@@ -561,26 +559,38 @@ int board_init(void)
 #ifdef CONFIG_MXC_SPI
         setup_spi();
 #endif
-        setup_i2c(0, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c0_pad_info);
-        setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c1_pad_info);
-        setup_i2c(2, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c2_pad_info);
+        setup_i2c(0, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c1_pad_info);
+        setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c2_pad_info);
+        setup_i2c(2, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c3_pad_info);
+
+        setup_pcie();
 
 #ifdef CONFIG_USB_EHCI_MX6
-       setup_usb();
+        setup_usb();
 #endif
 
-#if defined(CONFIG_CMD_SATA) && defined(CONFIG_MX6Q)
+#if defined(CONFIG_CMD_SATA) && (defined(CONFIG_MX6Q) || defined(CONFIG_MX6QP))
         setup_sata();
 #endif
 
         return 0;
 }
 
+int power_init_board(void)
+{
+        return 0;
+}
+
+#ifdef CONFIG_LDO_BYPASS_CHECK
+void ldo_mode_set(int ldo_bypass)
+{
+        if (ldo_bypass) {
+                printf("ldo_bypass mode is not supported\n");
+        }
+}
+#endif
+
 #ifdef CONFIG_MXC_SPI
-
-#define GPIO_ECSPI2_CS0     IMX_GPIO_NR(5, 12)
-#define GPIO_ECSPI3_CS2     IMX_GPIO_NR(4, 26)
-
 int board_spi_cs_gpio(unsigned bus, unsigned cs)
 {
         int ret = -1;
