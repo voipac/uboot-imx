@@ -62,6 +62,11 @@
 #define CONFIG_ENV_SPI_CS                   CONFIG_SF_DEFAULT_CS
 #define CONFIG_ENV_SPI_MAX_HZ               CONFIG_SF_DEFAULT_SPEED
 #define CONFIG_ENV_SPI_MODE                 CONFIG_SF_DEFAULT_MODE
+#elif defined(CONFIG_ENV_IS_IN_SATA)
+#define CONFIG_ENV_SIZE                     (SZ_8K)
+#define CONFIG_ENV_OFFSET                   (12 * SZ_64K)
+#define CONFIG_SATA_ENV_DEV                 0
+#define CONFIG_SYS_DCACHE_OFF               /* remove when sata driver support cache */
 #endif
 
 
@@ -88,12 +93,12 @@
 	"rdinit=/linuxrc " \
 	"g_mass_storage.stall=0 g_mass_storage.removable=1 " \
 	"g_mass_storage.file=/fat g_mass_storage.ro=1 " \
-	"g_mass_storage.idVendor=0x066F g_mass_storage.idProduct=0x37FF "\
-	"g_mass_storage.iSerialNumber=\"\" "\
-	"enable_wait_mode=off\0"\
+	"g_mass_storage.idVendor=0x066F g_mass_storage.idProduct=0x37FF " \
+	"g_mass_storage.iSerialNumber=\"\" " \
+	"enable_wait_mode=off\0" \
 	"initrd_addr=0x12C00000\0" \
 	"initrd_high=0xffffffff\0" \
-	"bootcmd_mfg=run mfgtool_args;bootz ${loadaddr} ${initrd_addr} ${fdt_addr};\0" \
+	"bootcmd_mfg=run mfgtool_args;bootz ${loadaddr} ${initrd_addr} ${fdt_addr};\0"
 
 #if defined(CONFIG_ANDROID_SUPPORT)
 
@@ -104,24 +109,7 @@
 
 #else
 
-#define CONFIG_EXTRA_ENV_SETTINGS \
-	CONFIG_MFG_ENV_SETTINGS \
-	"tftp_dir=" CONFIG_ENV_DEFAULT_TFTP_DIR "\0" \
-	"uboot="    CONFIG_ENV_DEFAULT_UBT_FILE "\0" \
-	"image="    "zImage" "\0" \
-	"fdt_file=" CONFIG_ENV_DEFAULT_FDT_FILE "\0" \
-	"script="   CONFIG_ENV_DEFAULT_SCR_FILE "\0" \
-	"fdt_addr=0x18000000\0" \
-	"boot_fdt=try\0" \
-	"console=" CONFIG_ENV_CONSOLE_DEV "\0" \
-	"fdt_high=0xffffffff\0" \
-	"initrd_high=0xffffffff\0" \
-	"smp=" CONFIG_SYS_NOSMP "\0"\
-	"mmcdev=" CONFIG_ENV_MMC_ENV_DEV "\0" \
-	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
-	"mmcroot=" CONFIG_ENV_MMCROOT " rootwait rw\0" \
-	"spidev=" __stringify(CONFIG_ENV_SPI_BUS) "\0" \
-	"spics=" __stringify(CONFIG_ENV_SPI_CS) "\0" \
+#define CONFIG_UPDATE_ENV_SETTINGS \
 	"set_ethernet=" \
 		"if test -n ${ethaddr}; then; else " \
 			"setenv ethaddr  " CONFIG_ENV_DEFAULT_ETH_ADDR  "; " \
@@ -147,7 +135,21 @@
 		"fi; " \
 		"if test -n ${upd_script}; then; else " \
 			"setenv upd_script " CONFIG_ENV_DEFAULT_SCR_FILE "; " \
-		"fi\0" \
+		"fi\0"
+#if defined(CONFIG_ENV_IS_IN_MMC)
+#define CONFIG_UPDATE_ENV_SETTINGS_UBOOT \
+	"update_uboot=" \
+		"run set_ethernet; " \
+		"run update_set_filename; " \
+		"if mmc dev ${mmcdev}; then "	\
+			"if tftp ${tftp_dir}/${upd_uboot}; then " \
+				"setexpr fw_sz ${filesize} / 0x200; " \
+				"setexpr fw_sz ${fw_sz} + 1; " \
+				"mmc write ${loadaddr} 0x2 ${fw_sz}; " \
+			"fi; " \
+		"fi\0"
+#elif defined(CONFIG_ENV_IS_IN_SPI_FLASH)
+#define CONFIG_UPDATE_ENV_SETTINGS_UBOOT \
 	"update_uboot=" \
 		"run set_ethernet; " \
 		"run update_set_filename; " \
@@ -158,8 +160,25 @@
 				"setexpr align_sz ${align_sz} * 0x8000; " \
 				"sf erase 0x0 ${align_sz}; " \
 				"sf write ${loadaddr} 0x400 ${filesize}; " \
-			"fi; "	\
-		"fi\0" \
+			"fi; " \
+		"fi\0"
+#elif defined(CONFIG_ENV_IS_IN_SATA)
+#define CONFIG_UPDATE_ENV_SETTINGS_UBOOT \
+	"update_uboot=" \
+		"run set_ethernet; " \
+		"run update_set_filename; " \
+		"if sata init; then " \
+			"if tftp ${tftp_dir}/${upd_uboot}; then " \
+				"setexpr fw_sz ${filesize} / 0x200; " \
+				"setexpr fw_sz ${fw_sz} + 1; " \
+				"sata write ${loadaddr} 0x2 ${fw_sz}; " \
+			"fi; " \
+		"fi\0"
+#else
+#define CONFIG_UPDATE_ENV_SETTINGS_UBOOT \
+	"update_uboot=\0"
+#endif
+#define CONFIG_UPDATE_ENV_SETTINGS_KERNEL \
 	"update_kernel=" \
 		"run set_ethernet; " \
 		"run update_set_filename; " \
@@ -167,8 +186,9 @@
 			"if tftp ${tftp_dir}/${upd_kernel}; then " \
 				"fatwrite mmc ${mmcdev}:${mmcpart} " \
 				"${loadaddr} ${image} ${filesize}; " \
-			"fi; "	\
-		"fi\0" \
+			"fi; " \
+		"fi\0"
+#define CONFIG_UPDATE_ENV_SETTINGS_FDT \
 	"update_fdt=" \
 		"run set_ethernet; " \
 		"run update_set_filename; " \
@@ -176,8 +196,9 @@
 			"if tftp ${tftp_dir}/${upd_fdt}; then " \
 				"fatwrite mmc ${mmcdev}:${mmcpart} " \
 				"${loadaddr} ${fdt_file} ${filesize}; " \
-			"fi; "	\
-		"fi\0" \
+			"fi; " \
+		"fi\0"
+#define CONFIG_UPDATE_ENV_SETTINGS_SCRIPT \
 	"update_script=" \
 		"run set_ethernet; " \
 		"run update_set_filename; " \
@@ -185,8 +206,32 @@
 			"if tftp ${tftp_dir}/${upd_script}; then " \
 				"fatwrite mmc ${mmcdev}:${mmcpart} " \
 				"${loadaddr} ${script} ${filesize}; " \
-			"fi; "	\
-		"fi\0" \
+			"fi; " \
+		"fi\0"
+
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	CONFIG_MFG_ENV_SETTINGS \
+	"tftp_dir=" CONFIG_ENV_DEFAULT_TFTP_DIR "\0" \
+	"uboot="    CONFIG_ENV_DEFAULT_UBT_FILE "\0" \
+	"image="    "zImage" "\0" \
+	"fdt_file=" CONFIG_ENV_DEFAULT_FDT_FILE "\0" \
+	"script="   CONFIG_ENV_DEFAULT_SCR_FILE "\0" \
+	"fdt_addr=0x18000000\0" \
+	"boot_fdt=try\0" \
+	"console=" CONFIG_ENV_CONSOLE_DEV "\0" \
+	"fdt_high=0xffffffff\0" \
+	"initrd_high=0xffffffff\0" \
+	"smp=" CONFIG_SYS_NOSMP "\0"\
+	"mmcdev=" CONFIG_ENV_MMC_ENV_DEV "\0" \
+	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
+	"mmcroot=" CONFIG_ENV_MMCROOT " rootwait rw\0" \
+	"spidev=" __stringify(CONFIG_ENV_SPI_BUS) "\0" \
+	"spics=" __stringify(CONFIG_ENV_SPI_CS) "\0" \
+	CONFIG_UPDATE_ENV_SETTINGS \
+	CONFIG_UPDATE_ENV_SETTINGS_UBOOT \
+	CONFIG_UPDATE_ENV_SETTINGS_KERNEL \
+	CONFIG_UPDATE_ENV_SETTINGS_FDT \
+	CONFIG_UPDATE_ENV_SETTINGS_SCRIPT \
 	"mmcargs=setenv bootargs console=${console},${baudrate} ${smp} ${extra} ${video} " \
 		"root=${mmcroot}\0" \
 	"loadbootscript=" \

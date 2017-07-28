@@ -13,7 +13,7 @@
 
 #ifdef CONFIG_MX6S
 #define CONFIG_MX6DL
-#define CONFIG_SYS_NOSMP="nosmp"
+#define CONFIG_SYS_NOSMP "nosmp"
 #else
 #define CONFIG_SYS_NOSMP
 #endif
@@ -161,6 +161,9 @@
 #endif
 
 /* Sata Configs */
+#if defined(CONFIG_MX6Q) || defined(CONFIG_MX6QP)
+#define CONFIG_CMD_SATA
+#endif
 #ifdef CONFIG_CMD_SATA
 #define CONFIG_DWC_AHSATA
 #define CONFIG_SYS_SATA_MAX_DEVICE          1
