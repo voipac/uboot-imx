@@ -1,7 +1,8 @@
 # uboot-imx-v2015.04
 ## Supported modules:
-* TinyRex mx6ultra/max/pro/basic (production)
-* Rex mx6ultra/pro/basic (production)
+* OpenREX mx6ultra/max/basic
+* REX mx6ultra/pro/basic
+* TinyREX mx6ultra/max/pro/basic
 
 ## Supported OS:
 * Linux
