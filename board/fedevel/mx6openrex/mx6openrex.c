@@ -703,18 +703,18 @@ void ldo_mode_set(int ldo_bypass)
         }
         else
         {
-//            unsigned int value;
-//            /* increase VDDARM to 1.425V */
-//            pmic_reg_read(p, PFUZE100_SW1ABVOL, &value);
-//            value &= ~0x3f;
-//            value |= 0x2d;
-//            pmic_reg_write(p, PFUZE100_SW1ABVOL, value);
-//
-//            /* increase VDDSOC to 1.425V */
-//            pmic_reg_read(p, PFUZE100_SW1CVOL, &value);
-//            value &= ~0x3f;
-//            value |= 0x2d;
-//            pmic_reg_write(p, PFUZE100_SW1CVOL, value);
+            unsigned int value;
+            /* increase VDDARM to 1.400V */
+            pmic_reg_read(p, PFUZE100_SW1ABVOL, &value);
+            value &= ~0x3f;
+            value |= 0x2c;
+            pmic_reg_write(p, PFUZE100_SW1ABVOL, value);
+
+            /* increase VDDSOC to 1.400V */
+            pmic_reg_read(p, PFUZE100_SW1CVOL, &value);
+            value &= ~0x3f;
+            value |= 0x2c;
+            pmic_reg_write(p, PFUZE100_SW1CVOL, value);
         }
     }
 #endif
