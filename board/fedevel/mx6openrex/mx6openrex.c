@@ -3,7 +3,7 @@
  *
  * Author: support <support@voipac.com>
  *
- * SPDX-License-Identifier:	GPL-2.0+
+ * SPDX-License-Identifier:    GPL-2.0+
  */
 
 #include <common.h>
@@ -643,7 +643,7 @@ int power_init_board(void)
     pmic_reg_read(pfuze, PFUZE100_DEVICEID, &value);
     printf("PMIC:  PFUZE100 ID=0x%02x\n", value);
 
-    /* Set SW1AB stanby volage to 0.975V */
+    /* Set SW1AB/VDDARM stanby volage to 0.975V */
     pmic_reg_read(pfuze, PFUZE100_SW1ABSTBY, &value);
     value &= ~SW1x_STBY_MASK;
     value |= SW1x_0_975V;
@@ -655,31 +655,23 @@ int power_init_board(void)
     value |= SW1xCONF_DVSSPEED_4US;
     pmic_reg_write(pfuze, PFUZE100_SW1ABCONF, value);
 
+    pmic_reg_read(pfuze, PFUZE100_SW1CSTBY, &value);
+    value &= ~SW1x_STBY_MASK;
     if (is_mx6dqp()) {
-        /* set SW1C staby volatage 1.075V*/
-        pmic_reg_read(pfuze, PFUZE100_SW1CSTBY, &value);
-        value &= ~0x3f;
-        value |= 0x1f;
-        pmic_reg_write(pfuze, PFUZE100_SW1CSTBY, value);
-
-        /* set SW1C/VDDSOC step ramp up time to from 16us to 4us/25mV */
-        pmic_reg_read(pfuze, PFUZE100_SW1CCONF, &value);
-        value &= ~0xc0;
-        value |= 0x40;
-        pmic_reg_write(pfuze, PFUZE100_SW1CCONF, value);
+        /* set SW1C/VDDSOC staby volatage 1.075V */
+        value |= SW1x_1_075V;
     } else {
-        /* set SW1C staby volatage 0.975V*/
-        pmic_reg_read(pfuze, PFUZE100_SW1CSTBY, &value);
-        value &= ~0x3f;
-        value |= 0x1b;
-        pmic_reg_write(pfuze, PFUZE100_SW1CSTBY, value);
-
-        /* set SW1C/VDDSOC step ramp up time to from 16us to 4us/25mV */
-        pmic_reg_read(pfuze, PFUZE100_SW1CCONF, &value);
-        value &= ~0xc0;
-        value |= 0x40;
-        pmic_reg_write(pfuze, PFUZE100_SW1CCONF, value);
+        /* set SW1C/VDDSOC staby volatage 0.975V */
+        value |= SW1x_0_975V;
     }
+    pmic_reg_write(pfuze, PFUZE100_SW1CSTBY, value);
+
+    /* set SW1C/VDDSOC step ramp up time to from 16us to 4us/25mV */
+    pmic_reg_read(pfuze, PFUZE100_SW1CCONF, &value);
+    value &= ~SW1xCONF_DVSSPEED_MASK;
+    value |= SW1xCONF_DVSSPEED_4US;
+    pmic_reg_write(pfuze, PFUZE100_SW1CCONF, value);
+
 #endif
     return 0;
 }
@@ -688,6 +680,7 @@ int power_init_board(void)
 void ldo_mode_set(int ldo_bypass)
 {
     struct pmic *p = pfuze;
+    unsigned int value;
 
     if (!p) {
         printf("No PMIC found!\n");
@@ -696,26 +689,56 @@ void ldo_mode_set(int ldo_bypass)
 #if defined(CONFIG_POWER_PFUZE100)
     /* increase VDDARM/VDDSOC to support 1.2G chip */
     if (check_1_2G()) {
-        /* ldo_enable on 1.2G chip */
         if (ldo_bypass)
         {
-            printf("1.2G chip, increase VDDARM/VDDSOC and disable ldo_bypass!\n");
+            printf("1.2G chip, Disable ldo_bypass (fsl,ldo-bypass = <0>)!\n");
         }
         else
         {
-            unsigned int value;
-            /* increase VDDARM to 1.400V */
+            /* increase SW1AB/VDDARM to 1.400V */
             pmic_reg_read(p, PFUZE100_SW1ABVOL, &value);
-            value &= ~0x3f;
-            value |= 0x2c;
+            value &= ~SW1x_NORMAL_MASK;
+            value |= SW1x_1_400V;
             pmic_reg_write(p, PFUZE100_SW1ABVOL, value);
 
-            /* increase VDDSOC to 1.400V */
+            /* increase SW1C/VDDSOC to 1.400V */
             pmic_reg_read(p, PFUZE100_SW1CVOL, &value);
-            value &= ~0x3f;
-            value |= 0x2c;
+            value &= ~SW1x_NORMAL_MASK;
+            value |= SW1x_1_400V;
             pmic_reg_write(p, PFUZE100_SW1CVOL, value);
+
+            printf("ldo_bypass mode disabled\n");
         }
+    }
+    else
+    {
+        if (ldo_bypass)
+        {
+            prep_anatop_bypass();
+
+            set_anatop_bypass(1);
+
+            /* Set SW1AB/VDDARM stanby volage to 1.225V */
+            pmic_reg_read(pfuze, PFUZE100_SW1ABVOL, &value);
+            value &= ~SW1x_NORMAL_MASK;
+            value |= SW1x_1_225V;
+            pmic_reg_write(pfuze, PFUZE100_SW1ABVOL, value);
+
+            /* set SW1C/VDDSOC staby volatage 1.300V */
+            pmic_reg_read(pfuze, PFUZE100_SW1CVOL, &value);
+            value &= ~SW1x_NORMAL_MASK;
+            value |= SW1x_1_300V;
+            pmic_reg_write(pfuze, PFUZE100_SW1CVOL, value);
+
+            finish_anatop_bypass();
+
+            printf("ldo_bypass mode enabled\n");
+        }
+        else
+        {
+            printf("Enable ldo_bypass mode (fsl,ldo-bypass = <1>)!\n");
+        }
+
     }
 #endif
 }
