@@ -691,7 +691,6 @@ void board_fastboot_setup(void)
         printf("unsupported boot devices\n");
         break;
     }
-
 }
 
 #ifdef CONFIG_ANDROID_RECOVERY
@@ -706,9 +705,9 @@ int check_recovery_cmd_file(void)
     int button_pressed = 0;
     int recovery_mode = 0;
 
-#ifdef CONFIG_BCB_SUPPORT
-    recovery_mode = recovery_check_and_clean_command();
-#endif
+
+    recovery_mode = recovery_check_and_clean_flag();
+
     /* Check Recovery Combo Button press or not. */
     imx_iomux_v3_setup_multiple_pads(recovery_key_pads,
             ARRAY_SIZE(recovery_key_pads));

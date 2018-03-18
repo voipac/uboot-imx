@@ -701,9 +701,8 @@ int check_recovery_cmd_file(void)
     int button_pressed = 0;
     int recovery_mode = 0;
 
-#ifdef CONFIG_BCB_SUPPORT
-    recovery_mode = recovery_check_and_clean_command();
-#endif
+    recovery_mode = recovery_check_and_clean_flag();
+
     /* Check Recovery Combo Button press or not. */
     if (pca9535_get_input_state(PCA9535_USER_KEY_PORT, PCA9535_USER_KEY_PIN) == 0) { /* USER key is low assert */
         button_pressed = 1;
