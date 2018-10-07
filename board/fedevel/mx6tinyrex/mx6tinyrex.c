@@ -97,12 +97,12 @@ iomux_v3_cfg_t const enet_pads1[] = {
     MX6_PAD_RGMII_TD2__RGMII_TD2       | MUX_PAD_CTRL(ENET_PAD_CTRL),
     MX6_PAD_RGMII_TD3__RGMII_TD3       | MUX_PAD_CTRL(ENET_PAD_CTRL),
     MX6_PAD_RGMII_TX_CTL__RGMII_TX_CTL | MUX_PAD_CTRL(ENET_PAD_CTRL),
-    MX6_PAD_ENET_REF_CLK__ENET_TX_CLK  | MUX_PAD_CTRL(ENET_PAD_CTRL),
-    MX6_PAD_RGMII_RXC__GPIO6_IO30      | MUX_PAD_CTRL(ENET_PAD_CTRL), /* PHYAD2  = 0 */
-    MX6_PAD_RGMII_RD0__GPIO6_IO25      | MUX_PAD_CTRL(ENET_PAD_CTRL), /* MODE0  = 1 */
-    MX6_PAD_RGMII_RD1__GPIO6_IO27      | MUX_PAD_CTRL(ENET_PAD_CTRL), /* MODE1  = 1 */
-    MX6_PAD_RGMII_RD2__GPIO6_IO28      | MUX_PAD_CTRL(ENET_PAD_CTRL), /* MODE2  = 1 */
-    MX6_PAD_RGMII_RD3__GPIO6_IO29      | MUX_PAD_CTRL(ENET_PAD_CTRL), /* MODE3  = 1 */
+    MX6_PAD_ENET_REF_CLK__GPIO1_IO23   | MUX_PAD_CTRL(ENET_PAD_CTRL), /* LED_MODE  = 1 */
+    MX6_PAD_RGMII_RXC__GPIO6_IO30      | MUX_PAD_CTRL(ENET_PAD_CTRL), /* PHYAD2    = 0 */
+    MX6_PAD_RGMII_RD0__GPIO6_IO25      | MUX_PAD_CTRL(ENET_PAD_CTRL), /* MODE0     = 1 */
+    MX6_PAD_RGMII_RD1__GPIO6_IO27      | MUX_PAD_CTRL(ENET_PAD_CTRL), /* MODE1     = 1 */
+    MX6_PAD_RGMII_RD2__GPIO6_IO28      | MUX_PAD_CTRL(ENET_PAD_CTRL), /* MODE2     = 1 */
+    MX6_PAD_RGMII_RD3__GPIO6_IO29      | MUX_PAD_CTRL(ENET_PAD_CTRL), /* MODE3     = 1 */
     MX6_PAD_RGMII_RX_CTL__GPIO6_IO24   | MUX_PAD_CTRL(ENET_PAD_CTRL), /* CLK125_EN = 1 */
     /* KSZ9021 PHY Int */
     MX6_PAD_ENET_TX_EN__GPIO1_IO28     | MUX_PAD_CTRL(NO_PAD_CTRL),
@@ -112,6 +112,7 @@ iomux_v3_cfg_t const enet_pads1[] = {
 };
 
 iomux_v3_cfg_t const enet_pads2[] = {
+    MX6_PAD_ENET_REF_CLK__ENET_TX_CLK  | MUX_PAD_CTRL(ENET_PAD_CTRL),
     MX6_PAD_RGMII_RXC__RGMII_RXC       | MUX_PAD_CTRL(ENET_PAD_CTRL),
     MX6_PAD_RGMII_RD0__RGMII_RD0       | MUX_PAD_CTRL(ENET_PAD_CTRL),
     MX6_PAD_RGMII_RD1__RGMII_RD1       | MUX_PAD_CTRL(ENET_PAD_CTRL),
@@ -123,6 +124,7 @@ iomux_v3_cfg_t const enet_pads2[] = {
 #define GPIO_ENET_INT_1         IMX_GPIO_NR(1, 28)
 #define GPIO_ENET_INT_2         IMX_GPIO_NR(1, 26)
 #define GPIO_ENET_RESET         IMX_GPIO_NR(1, 25)
+#define GPIO_ENET_CFG_LED_MODE  IMX_GPIO_NR(1, 23)
 #define GPIO_ENET_CFG_PHYAD2    IMX_GPIO_NR(6, 30)
 #define GPIO_ENET_CFG_MODE0     IMX_GPIO_NR(6, 25)
 #define GPIO_ENET_CFG_MODE1     IMX_GPIO_NR(6, 27)
@@ -135,6 +137,7 @@ static void setup_iomux_enet(void)
     imx_iomux_v3_setup_multiple_pads(enet_pads1, ARRAY_SIZE(enet_pads1));
 
     /* KSZ9021 PHY Cfg */
+    gpio_direction_output(GPIO_ENET_CFG_LED_MODE,  1);
     gpio_direction_output(GPIO_ENET_CFG_PHYAD2,    0);
     gpio_direction_output(GPIO_ENET_CFG_MODE0,     1);
     gpio_direction_output(GPIO_ENET_CFG_MODE1,     1);
