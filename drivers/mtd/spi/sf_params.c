@@ -103,6 +103,7 @@ const struct spi_flash_params spi_flash_params_table[] = {
 	{"SST25WF040",	   0xbf2504, 0x0,	64 * 1024,     8, RD_NORM,	    SECT_4K | SST_WR},
 	{"SST25WF040B",	   0x621613, 0x0,	64 * 1024,     8, RD_NORM,	    SECT_4K | SST_WR},
 	{"SST25WF080",	   0xbf2505, 0x0,	64 * 1024,    16, RD_NORM,	    SECT_4K | SST_WR},
+	{"SST26VF016B",    0xbf2641, 0x0,	64 * 1024,    32, RD_NORM,	    SECT_4K | SST_GBPU},
 	{"SST26VF032B",    0xbf2642, 0x0,	64 * 1024,    64, RD_NORM,	    SECT_4K | SST_GBPU},
 	{"SST26VF064B",    0xbf2643, 0x0,	64 * 1024,   128, RD_NORM,	    SECT_4K | SST_GBPU},
 #endif
